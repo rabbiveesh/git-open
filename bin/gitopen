@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+use Git::Open;
+use Getopt::Long;
+
+my $compare_view =0;
+my $diff;
+
+GetOptions ('c' => \$compare_view, 'd:s' => \$diff );
+
+$url = Git::Open::url_scheme();
+
+if( $compare_view ) {
+    $url = "$url/compare";
+
+    if( $diff ) {
+        $url = "$url/$diff";
+    }
+}
+
+system("open $url");
