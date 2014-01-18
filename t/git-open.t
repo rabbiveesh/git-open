@@ -19,4 +19,25 @@ subtest  _current_branch => sub {
     is( $branch, 'master', 'Get current branch' );
 };
 
+subtest url_compare_opts => sub {
+    my $opts = {
+        compare => {}
+    };
+
+    my $url = Git::Open::url($opts);
+    is( $url, 'http://github.com/abc/xzy/compare', 'Correct compare url' );
+
+};
+
+subtest url_compare_opts_with_diff => sub {
+
+    my $opts = {
+        compare => { diff => 'master-develop'}
+    };
+
+    my $url = Git::Open::url($opts);
+    is( $url, 'http://github.com/abc/xzy/compare/master...develop', 'Correct compare url with diff' );
+
+};
+
 done_testing();

@@ -1,20 +1,16 @@
 #!/usr/bin/perl
 use Git::Open;
-use Getopt::Long;
+use Getopt::Mini;   # parses the @ARGV into %ARGV
 
-my $compare_view =0;
-my $diff;
+my $opts = {};
+if( (exists $ARGV{'compare'}) || (exists $ARGV{'c'})  )  {
+    my $compare = {
+        diff => $ARGV{'compare'} || $ARGV{'c'}
+    };
 
-GetOptions ('c' => \$compare_view, 'd:s' => \$diff );
-
-$url = Git::Open::url_scheme();
-
-if( $compare_view ) {
-    $url = "$url/compare";
-
-    if( $diff ) {
-        $url = "$url/$diff";
-    }
+    $opts->{compare} = $compare;
 }
 
-system("open $url");
+my $url = Git::Open::url($opts);
+
+system("git web--browse $url");

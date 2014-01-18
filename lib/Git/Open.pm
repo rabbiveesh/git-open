@@ -19,4 +19,23 @@ sub _current_branch {
     return $current_branch;
 }
 
+sub url {
+    my ( $opts ) = @_;
+
+    my $url = Git::Open::_remote_url();
+
+    if( exists $opts->{compare} ) {
+        $url = "$url/compare";
+
+        my $diff = $opts->{compare}->{diff};
+
+        if ( $diff ) {
+            $diff =~ s/-/\.\.\./g; # Replace dash(-) to triple dot(...) as github uses
+            $url = "$url/$diff";
+        }
+    }
+
+    return $url;
+}
+
 1;
