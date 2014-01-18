@@ -4,6 +4,14 @@ package Git::Open;
 
 # ABSTRACT: a totally cool way to open repository page, sometime it's hard to remember.
 
+=head1 USAGE
+    git open # it will open homepage of your repository
+    git open --compare # it will open compare page
+    git open --compare master-develop # Open compare page with branch diff
+
+    Tip: -c is a shorthand for --compare
+=cut
+
 sub _remote_url {
     my $git_url = `git ls-remote --get-url`;
 

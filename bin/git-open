@@ -1,6 +1,9 @@
 #!/usr/bin/perl
 use Git::Open;
-use Getopt::Mini;   # parses the @ARGV into %ARGV
+use Getopt::Mini 0.02;   # parses the @ARGV into %ARGV
+
+# PODNAME: git-open
+# ABSTRACT: wrapper for Git::Open
 
 my $opts = {};
 if( (exists $ARGV{'compare'}) || (exists $ARGV{'c'})  )  {
