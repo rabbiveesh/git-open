@@ -10,34 +10,25 @@ use Test::Mock::Cmd 'qr' => {
 use Git::Open;
 
 subtest _remote_url => sub {
-    my $url =  Git::Open::_remote_url();
+    my $app = Git::Open->new_with_options();
+    my $url =  $app->_remote_url();
     is( $url, 'http://github.com/abc/xzy', 'Get remote url' );
 };
 
 subtest  _current_branch => sub {
-    my $branch =  Git::Open::_current_branch();
+    my $app = Git::Open->new_with_options();
+    my $branch =  $app->_current_branch();
     is( $branch, 'master', 'Get current branch' );
 };
 
 subtest url_compare_opts => sub {
     my $opts = {
-        compare => {}
+        compare => 'master-develop'
     };
 
-    my $url = Git::Open::url($opts);
-    is( $url, 'http://github.com/abc/xzy/compare', 'Correct compare url' );
-
-};
-
-subtest url_compare_opts_with_diff => sub {
-
-    my $opts = {
-        compare => { diff => 'master-develop'}
-    };
-
-    my $url = Git::Open::url($opts);
+    my $app = Git::Open->new_with_options($opts);
+    my $url = $app->generate_url();
     is( $url, 'http://github.com/abc/xzy/compare/master...develop', 'Correct compare url with diff' );
-
 };
 
 done_testing();

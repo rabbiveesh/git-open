@@ -1,6 +1,15 @@
 use strict;
 use warnings;
 package Git::Open;
+use Moose;
+
+with 'MooseX::Getopt::Usage';
+
+has compare => (
+    is => 'ro',
+    isa => 'Str',
+    documentation => 'To open compare view: master-develop'
+);
 
 # ABSTRACT: a totally cool way to open repository page, sometime it's hard to remember.
 
@@ -31,23 +40,27 @@ sub _current_branch {
     return $current_branch;
 }
 
-sub url {
-    my ( $opts ) = @_;
+sub generate_url {
+    my ( $self, $opts ) = @_;
 
-    my $url = Git::Open::_remote_url();
+    my $url = $self->_remote_url();
 
-    if( exists $opts->{compare} ) {
-        $url = "$url/compare";
+    if( $self->compare ) {
 
-        my $diff = $opts->{compare}->{diff};
+        my $compare = $self->compare;
 
-        if ( $diff ) {
-            $diff =~ s/-/\.\.\./g; # Replace dash(-) to triple dot(...) as github uses
-            $url = "$url/$diff";
-        }
+        $compare =~ s/-/\.\.\./g; # Replace dash(-) to triple dot(...) as github uses
+        $url = "$url/compare/$compare";
     }
 
     return $url;
 }
+
+sub run {
+    my $self = shift;
+
+    my $url = $self->generate_url();
+    system("git web--browse $url");
+};
 
 1;
