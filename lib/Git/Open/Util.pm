@@ -40,14 +40,16 @@ sub generate_url {
     my $self = shift;
     my $args = shift;
 
-    my $suffix;
-    my $pattern;
-
-    if( $args->{compare} ) {
-        my @branches = split( /-/, $args->{compare} );
-        $suffix = $self->_url_pattern( 'compare' );
-        foreach my $i ( 0..1 ) {
-            $suffix =~ s/_$i/$branches[$i]/;
+    my $suffix = '';
+    if( defined $args->{compare} ) {
+        if( $args->{compare} eq '' ) {
+            $suffix = 'compare';
+        }else {
+            my @branches = split( /-/, $args->{compare} );
+            $suffix = $self->_url_pattern( 'compare' );
+            foreach my $i ( 0..1 ) {
+                $suffix =~ s/_$i/$branches[$i]/;
+            }
         }
     }elsif ( defined $args->{branch} ) {
         my $branch = $args->{branch} || $self->current_branch;

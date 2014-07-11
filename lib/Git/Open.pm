@@ -4,12 +4,29 @@ package Git::Open;
 use Moose;
 use Git::Open::Util;
 
+use Moose::Util::TypeConstraints;
+
 with 'MooseX::Getopt::Usage';
+
+subtype 'MaybeStr'
+    => as 'Str'
+    => where { defined $_ };
+
+MooseX::Getopt::OptionTypeMap->add_option_type_to_map(
+    'MaybeStr' => ':s'
+);
 
 has compare => (
     is => 'ro',
-    isa => 'Str',
-    documentation => 'To open compare view: master-develop'
+    isa => 'MaybeStr',
+    default => '',
+    documentation => 'To open compare view, ex: --compare master-develop'
+);
+
+has 'branch' => (
+    is => 'ro',
+    isa => 'MaybeStr',
+    documentation => 'To open branch view: --branch develop'
 );
 
 has generator => (
@@ -21,8 +38,7 @@ has generator => (
     },
     handles => {
         url => 'generate_url'
-    },
-    documentation => ''
+    }
 );
 
 # ABSTRACT: a totally cool way to open repository page, sometime it's hard to remember.
@@ -33,9 +49,11 @@ has generator => (
 
     git open --compare # it will open compare page
 
-    git open --compare master-develop # Open compare page with branch diff
+    git open --compare master-develop # Open compare page betwee master and develop
 
-    Tip: -c is a shorthand for --compare
+    git open --branch master # Open master branch's page
+
+    git open --branch # Open current branch's page
 
 =cut
 
@@ -50,7 +68,8 @@ sub run {
 sub args {
     my $self = shift;
     return {
-        compare => $self->compare()
+        compare => $self->compare(),
+        branch => $self->branch()
     };
 }
 
