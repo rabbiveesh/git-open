@@ -30,9 +30,9 @@ has service => (
     is => 'ro',
     lazy => 1,
     default => sub {
-        # TODO: Load class by remote URL
-        use Git::Open::Service::Github;
-        return Git::Open::Service::Github->new;
+        my $self = shift;
+        $self->remote_url =~ m|//([a-z]+)\.|;
+        return $1;
     }
 );
 
@@ -41,12 +41,38 @@ sub generate_url {
     my $args = shift;
 
     my $suffix;
-    # TODO: add branch & pull request
+    my $pattern;
+
     if( $args->{compare} ) {
-        $suffix = $self->service->compare_page_url( $args->{compare} );
+        my @branches = split( /-/, $args->{compare} );
+        $suffix = $self->_url_pattern( 'compare' );
+        foreach my $i ( 0..1 ) {
+            $suffix =~ s/_$i/$branches[$i]/;
+        }
+    }elsif ( defined $args->{branch} ) {
+        my $branch = $args->{branch} || $self->current_branch;
+        $suffix = $self->_url_pattern( 'branch' );
+        $suffix =~ s/_0/$branch/;
     }
 
     return $self->remote_url.'/'.$suffix;
+};
+
+sub _url_pattern {
+    my $self = shift;
+    my $view = shift;
+    my $mapping_pattern = {
+        github => {
+            compare => 'compare/_0..._1',
+            branch => 'tree/_0'
+        },
+        bitbucket => {
+            compare => 'compare/_0.._1',
+            branch => 'src?at=_0'
+        }
+    };
+
+    return $mapping_pattern->{$self->service}->{$view};
 };
 
 1;
