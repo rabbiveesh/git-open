@@ -14,13 +14,15 @@ has compare => (
 
 has generator => (
     is => 'ro',
+    metaclass => 'NoGetopt',
     isa => 'Git::Open::Util',
     default => sub {
         return Git::Open::Util->new();
     },
     handles => {
         url => 'generate_url'
-    }
+    },
+    documentation => ''
 );
 
 # ABSTRACT: a totally cool way to open repository page, sometime it's hard to remember.
@@ -44,7 +46,7 @@ sub run {
     system("git web--browse $url");
 }
 
-# TODO: Find the way to get it from Moose
+# TODO: Find the way to args get it from Moose
 sub args {
     my $self = shift;
     return {
