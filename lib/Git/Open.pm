@@ -41,7 +41,7 @@ has generator => (
     }
 );
 
-# ABSTRACT: a totally cool way to open repository page, sometime it's hard to remember.
+# ABSTRACT: The totally cool way to open repository page, sometime it's hard to remember and open via browser manually.
 
 =head1 USAGE
 
