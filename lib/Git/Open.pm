@@ -21,7 +21,6 @@ MooseX::Getopt::OptionTypeMap->add_option_type_to_map(
 has compare => (
     is => 'ro',
     isa => 'MaybeStr',
-    default => '',
     documentation => 'To open compare view, ex: --compare master-develop'
 );
 
@@ -62,17 +61,22 @@ has generator => (
 sub run {
     my $self = shift;
 
-    my $url = $self->url( $self->args );
+    my $url = $self->get_url();
     system("git web--browse $url");
 }
 
-# TODO: Find the way to args get it from Moose
-sub args {
+sub get_url {
     my $self = shift;
-    return {
-        compare => $self->compare(),
-        branch => $self->branch()
-    };
-}
+
+    my @opts = qw( compare branch );
+
+    my $args;
+    foreach my $opt ( @opts ) {
+        my $value = $self->meta->get_attribute($opt)->get_value($self);
+        $args->{$opt} = $value if defined $value;
+    }
+
+    return $self->url( $args );
+};
 
 1;
